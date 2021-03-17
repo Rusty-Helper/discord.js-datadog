@@ -72,14 +72,26 @@ You can of course provide a function as a metric and it's return value will be u
 
 You can modify these tags with the `tag` object in the options as well as add your own tags
 
+## Prefixes
+
+Specify a prefix in the option and all metrics will be sent with that prefix. Don't include a dot . as it is automatically added.
+
+e.g. 
+`prefix: "mybot"`
+`metirc: "client.ping"`
+
+metric name in datadog will be `mybot.client.ping`
+
 ## Example
 
 ```js
+const Discord = require("discord.js")
+const DDmetrics = require("discord.js-datadog")
 const client = new Discord.Client({ 
     // Discord.js client options here
 })
 
-client.DDmetrics = DDmetrics({
+client.datadog = DDmetrics({
     metrics: {
         "shard.ws.ping": {
             name: "shard.ping",
@@ -92,9 +104,18 @@ client.DDmetrics = DDmetrics({
     tags: {
         version: "v1",
         type: "bot"
-    }
+    },
+    prefix: "mybot",
+    apiKey: "DD_API_KEY",
+    interval: 10000,
 })
 ```
+
+## DataDog api 
+
+We use [datadog-metrics](https://www.npmjs.com/package/datadog-metrics) for posting metrics to DataDog using their api.
+
+**NO AGENT IS REQUIRED** this is not a StatsD library so we do not require an agent to post to
 
 ## Logging
 
@@ -105,3 +126,25 @@ Find configuration [here](https://docs.datadoghq.com/logs/log_collection/nodejs/
 ## Traces
 
 DataDog recommends to use [dd-trace](https://datadoghq.dev/dd-trace-js/) for their custom [tracing](https://docs.datadoghq.com/tracing/)
+
+## Contributing
+
+Feel free to make a pull request with any features you want to see intergrated or make an issue with a bug.
+
+All are welcome
+
+# API
+
+### Initialization
+
+
+### Flush
+
+`metrics.flush()`
+
+Sends all currently stored metrics. You should not need to call this manually unless you have the interval set to 0
+
+### DataDog metrics
+
+You can find access to the `datadog-metrics` object through the `ddmetrics` property which will provide you full access
+to all of the api properties documented for the [datadog-metrics](https://github.com/dbader/node-datadog-metrics) library
